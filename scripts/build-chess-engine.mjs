@@ -1,5 +1,5 @@
 import { spawnSync } from "node:child_process";
-import { mkdirSync } from "node:fs";
+import { existsSync, mkdirSync, statSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -7,6 +7,7 @@ const appRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const sharedRoot = resolve(appRoot, "../chess/shared/chess");
 const outputRoot = resolve(appRoot, "public/engine");
 const outputFile = resolve(outputRoot, "chess-engine.js");
+const outputWasmFile = resolve(outputRoot, "chess-engine.wasm");
 
 mkdirSync(outputRoot, { recursive: true });
 
@@ -58,6 +59,15 @@ const result = spawnSync("em++", [
 ], { cwd: appRoot, stdio: "inherit" });
 
 if (result.error) {
+  const hasPrebuiltEngine = [outputFile, outputWasmFile].every(
+    (file) => existsSync(file) && statSync(file).size > 0,
+  );
+
+  if (result.error.code === "ENOENT" && process.env.VERCEL === "1" && hasPrebuiltEngine) {
+    console.warn("Emscripten is unavailable on Vercel; using the checked-in engine artifacts.");
+    process.exit(0);
+  }
+
   console.error(`Could not run em++: ${result.error.message}`);
   process.exit(1);
 }

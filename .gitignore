@@ -19,7 +19,6 @@
 
 # production
 /build
-/public/engine/
 
 # misc
 .DS_Store
