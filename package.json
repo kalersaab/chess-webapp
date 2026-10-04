@@ -3,10 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "predev": "npm run build:engine",
     "dev": "next dev",
+    "prebuild": "npm run build:engine",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "build:engine": "node scripts/build-chess-engine.mjs"
   },
   "dependencies": {
     "next": "16.3.8",

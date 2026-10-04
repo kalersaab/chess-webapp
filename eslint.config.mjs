@@ -11,6 +11,8 @@ const eslintConfig = defineConfig([
     ".next/**",
     "out/**",
     "build/**",
+    "public/engine/**",
+    "public/chess-search-worker.js",
     "next-env.d.ts",
   ]),
 ]);
